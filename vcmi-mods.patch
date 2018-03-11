@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4751f8d..bd17c0e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -241,6 +241,8 @@ if (NOT APPLE)
+ 	install(DIRECTORY config DESTINATION ${DATA_DIR} PATTERN ".svn" EXCLUDE)
+ 	# copy vcmi mod along with all its content
+ 	install(DIRECTORY Mods/vcmi DESTINATION ${DATA_DIR}/Mods PATTERN ".svn" EXCLUDE)
++	install(DIRECTORY Mods/bonusIcons DESTINATION ${DATA_DIR}/Mods PATTERN ".svn" EXCLUDE)
++	install(DIRECTORY Mods/extraResolutions DESTINATION ${DATA_DIR}/Mods PATTERN ".svn" EXCLUDE)
+ 
+ 	install(FILES vcmibuilder DESTINATION ${BIN_DIR} PERMISSIONS
+ 		OWNER_WRITE OWNER_READ OWNER_EXECUTE

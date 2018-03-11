@@ -1,0 +1,280 @@
+diff -up vcmi-0.99/lib/serializer/Connection.cpp.boost_compatibility vcmi-0.99/lib/serializer/Connection.cpp
+--- vcmi-0.99/lib/serializer/Connection.cpp.boost_compatibility	2016-11-01 19:26:09.000000000 +0100
++++ vcmi-0.99/lib/serializer/Connection.cpp	2018-03-05 02:29:04.878950274 +0100
+@@ -62,12 +62,21 @@ void CConnection::init()
+ }
+ 
+ CConnection::CConnection(std::string host, std::string port, std::string Name)
++#if BOOST_VERSION < 106600
+ :iser(this), oser(this), io_service(new asio::io_service), name(Name)
++#else
++:iser(this), oser(this), io_context(new asio::io_context), name(Name)
++#endif
+ {
+ 	int i;
+ 	boost::system::error_code error = asio::error::host_not_found;
++#if BOOST_VERSION < 106600
+ 	socket = new tcp::socket(*io_service);
+ 	tcp::resolver resolver(*io_service);
++#else
++	socket = new tcp::socket(*io_context);
++	tcp::resolver resolver(*io_context);
++#endif
+ 	tcp::resolver::iterator end, pom, endpoint_iterator = resolver.resolve(tcp::resolver::query(host,port),error);
+ 	if(error)
+ 	{
+@@ -112,20 +121,37 @@ connerror1:
+ 		logNetwork->errorStream() << error;
+ 	else
+ 		logNetwork->errorStream() << "No error info. ";
++#if BOOST_VERSION < 106600
+ 	delete io_service;
++#else
++	delete io_context;
++#endif
+ 	//delete socket;
+ 	throw std::runtime_error("Can't establish connection :(");
+ }
+ CConnection::CConnection(TSocket * Socket, std::string Name )
++#if BOOST_VERSION < 106600
+ 	:iser(this), oser(this), socket(Socket),io_service(&Socket->get_io_service()), name(Name)//, send(this), rec(this)
++#else
++	:iser(this), oser(this), socket(Socket),io_context(&Socket->get_io_context()), name(Name)//, send(this), rec(this)
++#endif
+ {
+ 	init();
+ }
++#if BOOST_VERSION < 106600
+ CConnection::CConnection(TAcceptor * acceptor, boost::asio::io_service *Io_service, std::string Name)
+ : iser(this), oser(this), name(Name)//, send(this), rec(this)
++#else
++CConnection::CConnection(TAcceptor * acceptor, boost::asio::io_context *Io_context, std::string Name)
++: iser(this), oser(this), name(Name)//, send(this), rec(this)
++#endif
+ {
+ 	boost::system::error_code error = asio::error::host_not_found;
++#if BOOST_VERSION < 106600
+ 	socket = new tcp::socket(*io_service);
++#else
++	socket = new tcp::socket(*io_context);
++#endif
+ 	acceptor->accept(*socket,error);
+ 	if (error)
+ 	{
+@@ -172,7 +198,11 @@ CConnection::~CConnection(void)
+ 	delete handler;
+ 
+ 	close();
++#if BOOST_VERSION < 106600
+ 	delete io_service;
++#else
++	delete io_context;
++#endif
+ 	delete wmx;
+ 	delete rmx;
+ }
+diff -up vcmi-0.99/lib/serializer/Connection.h.boost_compatibility vcmi-0.99/lib/serializer/Connection.h
+--- vcmi-0.99/lib/serializer/Connection.h.boost_compatibility	2016-11-01 19:26:09.000000000 +0100
++++ vcmi-0.99/lib/serializer/Connection.h	2018-03-05 02:17:57.824585179 +0100
+@@ -24,6 +24,7 @@ namespace boost
+ 		{
+ 			class tcp;
+ 		}
++#if BOOST_VERSION < 106600
+ 		class io_service;
+ 
+ 		template <typename Protocol> class stream_socket_service;
+@@ -33,12 +34,26 @@ namespace boost
+ 		template <typename Protocol> class socket_acceptor_service;
+ 		template <typename Protocol,typename SocketAcceptorService>
+ 		class basic_socket_acceptor;
++#else
++		class io_context;
++        
++		template <typename Protocol>
++		class basic_stream_socket;
++
++		template <typename Protocol>
++		class basic_socket_acceptor;
++#endif
+ 	}
+ 	class mutex;
+ }
+ 
++#if BOOST_VERSION < 106600 
+ typedef boost::asio::basic_stream_socket < boost::asio::ip::tcp , boost::asio::stream_socket_service<boost::asio::ip::tcp>  > TSocket;
+ typedef boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::socket_acceptor_service<boost::asio::ip::tcp> > TAcceptor;
++#else
++typedef boost::asio::basic_stream_socket < boost::asio::ip::tcp > TSocket;
++typedef boost::asio::basic_socket_acceptor<boost::asio::ip::tcp > TAcceptor;
++#endif
+ 
+ /// Main class for network communication
+ /// Allows establishing connection and bidirectional read-write
+@@ -61,7 +76,11 @@ public:
+ 	bool logging;
+ 	bool connected;
+ 	bool myEndianess, contactEndianess; //true if little endian, if endianness is different we'll have to revert received multi-byte vars
++#if BOOST_VERSION < 106600 
+ 	boost::asio::io_service *io_service;
++#else
++	boost::asio::io_context *io_context;
++#endif
+ 	std::string name; //who uses this connection
+ 
+ 	int connectionID;
+@@ -70,7 +89,11 @@ public:
+ 	bool receivedStop, sendStop;
+ 
+ 	CConnection(std::string host, std::string port, std::string Name);
++#if BOOST_VERSION < 106600 
+ 	CConnection(TAcceptor * acceptor, boost::asio::io_service *Io_service, std::string Name);
++#else
++	CConnection(TAcceptor * acceptor, boost::asio::io_context *Io_context, std::string Name);
++#endif
+ 	CConnection(TSocket * Socket, std::string Name); //use immediately after accepting connection into socket
+ 
+ 	void close();
+diff -up vcmi-0.99/server/CVCMIServer.cpp.boost_compatibility vcmi-0.99/server/CVCMIServer.cpp
+--- vcmi-0.99/server/CVCMIServer.cpp.boost_compatibility	2016-11-01 19:26:09.000000000 +0100
++++ vcmi-0.99/server/CVCMIServer.cpp	2018-03-05 18:00:05.822295516 +0100
+@@ -165,8 +165,13 @@ void CPregameServer::run()
+ 
+ 			if(acceptor)
+ 			{
++#if BOOST_VERSION < 106600
+ 				acceptor->get_io_service().reset();
+ 				acceptor->get_io_service().poll();
++#else
++				acceptor->get_io_context().reset();
++				acceptor->get_io_context().poll();
++#endif
+ 			}
+ 		} //frees lock
+ 
+@@ -227,7 +232,11 @@ void CPregameServer::start_async_accept(
+ 	assert(!upcomingConnection);
+ 	assert(acceptor);
+ 
++#if BOOST_VERSION < 106600 
+ 	upcomingConnection = new TSocket(acceptor->get_io_service());
++#else
++	upcomingConnection = new TSocket(acceptor->get_io_context());
++#endif
+ 	acceptor->async_accept(*upcomingConnection, std::bind(&CPregameServer::connectionAccepted, this, _1));
+ }
+ 
+@@ -312,7 +321,12 @@ void CPregameServer::startListeningThrea
+ }
+ 
+ CVCMIServer::CVCMIServer()
+-: io(new boost::asio::io_service()), acceptor(new TAcceptor(*io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))), firstConnection(nullptr)
++#if BOOST_VERSION < 106600 
++: io(new boost::asio::io_service()), acceptor(new TAcceptor(*io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))),
++#else
++: io(new boost::asio::io_context()), acceptor(new TAcceptor(*io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))),
++#endif
++    firstConnection(nullptr)
+ {
+ 	logNetwork->trace("CVCMIServer created!");
+ }
+@@ -412,7 +426,11 @@ void CVCMIServer::start()
+ 
+ 	boost::system::error_code error;
+ 	logNetwork->info("Listening for connections at port %d", acceptor->local_endpoint().port());
++#if BOOST_VERSION < 106600 
+ 	auto s = new boost::asio::ip::tcp::socket(acceptor->get_io_service());
++#else
++	auto s = new boost::asio::ip::tcp::socket(acceptor->get_io_context());
++#endif
+ 	boost::thread acc(std::bind(vaccept,acceptor,s,&error));
+ #ifndef VCMI_ANDROID
+ 	sr->setToTrueAndNotify();
+@@ -480,7 +498,11 @@ void CVCMIServer::loadGame()
+ 		}
+ 		else
+ 		{
++#if BOOST_VERSION < 106600 
+ 			auto s = new boost::asio::ip::tcp::socket(acceptor->get_io_service());
++#else
++			auto s = new boost::asio::ip::tcp::socket(acceptor->get_io_context());
++#endif
+ 			acceptor->accept(*s,error);
+ 			if(error) //retry
+ 			{
+@@ -593,7 +615,11 @@ int main(int argc, char** argv)
+ 	srand ( (ui32)time(nullptr) );
+ 	try
+ 	{
++#if BOOST_VERSION < 106600 
+ 		boost::asio::io_service io_service;
++#else
++		boost::asio::io_context io_context;
++#endif
+ 		CVCMIServer server;
+ 
+ 		try
+@@ -602,7 +628,11 @@ int main(int argc, char** argv)
+ 			{
+ 				server.start();
+ 			}
++#if BOOST_VERSION < 106600 
+ 			io_service.run();
++#else
++			io_context.run();
++#endif
+ 		}
+ 		catch(boost::system::system_error &e) //for boost errors just log, not crash - probably client shut down connection
+ 		{
+diff -up vcmi-0.99/server/CVCMIServer.h.boost_compatibility vcmi-0.99/server/CVCMIServer.h
+--- vcmi-0.99/server/CVCMIServer.h.boost_compatibility	2016-11-01 19:26:09.000000000 +0100
++++ vcmi-0.99/server/CVCMIServer.h	2018-03-05 17:55:15.294119498 +0100
+@@ -26,6 +26,7 @@ namespace boost
+ 		{
+ 			class tcp;
+ 		}
++#if BOOST_VERSION < 106600
+ 		class io_service;
+ 
+ 		template <typename Protocol> class stream_socket_service;
+@@ -35,15 +36,33 @@ namespace boost
+ 		template <typename Protocol> class socket_acceptor_service;
+ 		template <typename Protocol,typename SocketAcceptorService>
+ 		class basic_socket_acceptor;
++#else
++		class io_context;
++        
++		template <typename Protocol>
++		class basic_stream_socket;
++
++		template <typename Protocol>
++		class basic_socket_acceptor;
++#endif
+ 	}
+ };
+ 
+-typedef boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::socket_acceptor_service<boost::asio::ip::tcp> > TAcceptor;
++#if BOOST_VERSION < 106600 
+ typedef boost::asio::basic_stream_socket < boost::asio::ip::tcp , boost::asio::stream_socket_service<boost::asio::ip::tcp>  > TSocket;
++typedef boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::socket_acceptor_service<boost::asio::ip::tcp> > TAcceptor;
++#else
++typedef boost::asio::basic_stream_socket < boost::asio::ip::tcp > TSocket;
++typedef boost::asio::basic_socket_acceptor<boost::asio::ip::tcp > TAcceptor;
++#endif
+ 
+ class CVCMIServer
+ {
++#if BOOST_VERSION < 106600 
+ 	boost::asio::io_service *io;
++#else
++	boost::asio::io_context *io;
++#endif
+ 	TAcceptor * acceptor;
+ 
+ 	CConnection *firstConnection;
+@@ -97,4 +116,4 @@ public:
+ 	void startListeningThread(CConnection * pc);
+ };
+ 
+-extern boost::program_options::variables_map cmdLineOptions;
++extern boost::program_options::variables_map cmdLineOptions;
