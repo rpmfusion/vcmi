@@ -18,6 +18,13 @@ Patch1:             %{name}-boost-1.66.patch
 Source2:            %{name}.zip
 Patch2:             %{name}-mods.patch
 
+# Boost 1.69 failures
+# tribool casts + https://github.com/vcmi/vcmi/commit/edcaaf036acb76882df2274f4df2aeef3c84525e
+Patch3:             %{name}-boost-1.69.patch
+
+# The Koji builder gets killed here, but I don't expect people to use this there
+ExcludeArch:    ppc64le
+
 BuildRequires:  %{_bindir}/desktop-file-validate
 BuildRequires:  %{_bindir}/dos2unix
 BuildRequires:  cmake
@@ -70,6 +77,8 @@ Data files for the VCMI project, a %{summary}.
 # mods from Source2:
 mv vcmi/Mods/* Mods && rm -rf vcmi
 %patch2 -p1
+
+%patch3 -p1
 
 dos2unix README.md README.linux license.txt AUTHORS ChangeLog
 
