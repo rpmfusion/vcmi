@@ -1,7 +1,7 @@
 Name:           vcmi
 Summary:        Heroes of Might and Magic 3 game engine
 Version:        0.99
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        GPLv2+
 URL:            https://vcmi.eu/
 
@@ -129,6 +129,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %changelog
+* Wed Feb 05 2020 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.99-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Wed Aug 07 2019 Leigh Scott <leigh123linux@gmail.com> - 0.99-6
 - Rebuild for new ffmpeg version
 
