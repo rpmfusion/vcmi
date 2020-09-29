@@ -1,2 +1,6 @@
-/vcmi-0.99.tar.gz
+/vcmi-*.tar.gz
+/fuzzylite-*.tar.gz
 /vcmi.zip
+results_vcmi/
+/vcmi-*/
+*.src.rpm

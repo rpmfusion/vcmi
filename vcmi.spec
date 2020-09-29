@@ -1,26 +1,31 @@
 Name:           vcmi
 Summary:        Heroes of Might and Magic 3 game engine
-Version:        0.99
-Release:        10%{?dist}
-License:        GPLv2+
 URL:            https://vcmi.eu/
 
-Source:         https://github.com/%{name}/%{name}/archive/%{version}/%{name}-%{version}.tar.gz
+%global commit  f06c8a872592bddfbe3fd5116979af0679f27bd3
+%global scommit %(c=%{commit}; echo ${c:0:7})
 
-# Absolutely disgusting and untested patch for compatibility with Boost 1.66
-# Courtesy of Robert-André Mauchin during the review
-# Sent upstream via https://github.com/vcmi/vcmi/pull/285#issuecomment-370504722
-Patch1:             %{name}-boost-1.66.patch
+%global fuzzylite_commit  9751a751a17c0682ed5d02e583c6a0cda8bc88e5
+%global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
+%global fuzzylite_version 6.0
+
+
+Version:        0.99^20190113git%{scommit}
+Release:        1%{?dist}
+
+# vcmi is GPLv2+, fyzzylight is GPLv3
+License:        GPLv2+ and GPLv3
+
+Source0:        https://github.com/%{name}/%{name}/archive/%{commit}/%{name}-%{scommit}.tar.gz
+Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
 
 # Enable extra resolutions
 # https://forum.vcmi.eu/t/where-is-the-mod-for-resolutions-other-than-800x600/897/5
 # https://www.dropbox.com/sh/fwor43x5xrgzx6q/AABpTFqGK7Q9almbyr3hp9jma/mods/vcmi.zip (not directly downloadable)
 Source2:            %{name}.zip
-Patch2:             %{name}-mods.patch
 
-# Boost 1.69 failures
-# tribool casts + https://github.com/vcmi/vcmi/commit/edcaaf036acb76882df2274f4df2aeef3c84525e
-Patch3:             %{name}-boost-1.69.patch
+# Boost 1.71+
+Patch1:         https://github.com/vcmi/vcmi/commit/ac81d0f.patch
 
 # The Koji builder gets killed here, but I don't expect people to use this there
 ExcludeArch:    ppc64le
@@ -41,6 +46,7 @@ BuildRequires:  boost-system >= 1.51
 BuildRequires:  boost-thread >= 1.51
 BuildRequires:  boost-program-options >= 1.51
 BuildRequires:  boost-locale >= 1.51
+BuildRequires:  minizip-devel
 BuildRequires:  zlib-devel
 BuildRequires:  ffmpeg-devel
 BuildRequires:  ffmpeg-libs
@@ -48,7 +54,7 @@ BuildRequires:  qt5-qtbase-devel
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
-
+Provides:       bundled(fuzzylight) = %{fuzzylite_version}
 
 %description
 The purpose of VCMI project is to rewrite entire Heroes 3.5: WoG engine from
@@ -70,32 +76,38 @@ Data files for the VCMI project, a %{summary}.
 
 
 %prep
-%setup -q -a2
-
-%patch1 -p1
+%setup -q -a1 -a2 -n %{name}-%{commit}
+# fuzzyight from Source1:
+rmdir AI/FuzzyLite
+mv fuzzylite-%{fuzzylite_commit} AI/FuzzyLite
 
 # mods from Source2:
 mv vcmi/Mods/* Mods && rm -rf vcmi
-%patch2 -p1
 
-%patch3 -p1
+dos2unix README.md license.txt AUTHORS ChangeLog
 
-dos2unix README.md README.linux license.txt AUTHORS ChangeLog
+%patch1 -p1
 
 
 %build
-%cmake -DENABLE_TEST=0 -UCMAKE_INSTALL_LIBDIR
+# low effort fix of some cmake brokenness
+export CXXFLAGS="%{build_cxxflags} -I/usr/include/ffmpeg"
 
-%ifarch %{ix86} x86_64
-%make_build
-%else
+%cmake \
+  -DENABLE_TEST=0 \
+  -UCMAKE_INSTALL_LIBDIR \
+  -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+  -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name}
+
+%ifnarch %{ix86} x86_64
 # not enough memory in Koji for parallel build
-make
+%global _smp_mflags -j1
 %endif
+%cmake_build
 
 
 %install
-%make_install
+%cmake_install
 
 
 %check
@@ -106,8 +118,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %files
-%doc README.md README.linux AUTHORS ChangeLog
-%license license.txt
+%doc README.md AUTHORS ChangeLog
+%license license.txt AI/FuzzyLite/LICENSE.FuzzyLite
 %{_bindir}/vcmiclient
 %{_bindir}/vcmiserver
 %{_bindir}/vcmibuilder
@@ -118,10 +130,6 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/vcmiclient.png
 
-# don't need devel and static packages until requested
-%exclude %{_includedir}/fl
-%exclude %{_libdir}/*.a
-
 
 %files data
 %{_datadir}/%{name}/
@@ -129,11 +137,12 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %changelog
-* Tue Aug 18 2020 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.99-10
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
-
-* Thu Jun 04 2020 Leigh Scott <leigh123linux@gmail.com> - 0.99-9
+* Tue Sep 29 2020 Miro Hrončok <mhroncok@redhat.com> - 0.99^20190113gitf06c8a8-1
+- Update to a git snapshot to support new Boost
+- Use RPATH to make it launch :/
+- Declare the bundled FuzzyLite
 - Rebuilt for Boost 1.73
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
 * Sat Feb 22 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 0.99-8
 - Rebuild for ffmpeg-4.3 git
