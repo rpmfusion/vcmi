@@ -11,7 +11,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        0.99^20190113git%{scommit}
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -137,6 +137,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %changelog
+* Fri Jan  1 2021 Leigh Scott <leigh123linux@gmail.com> - 0.99^20190113gitf06c8a8-2
+- Rebuilt for new ffmpeg snapshot
+
 * Tue Sep 29 2020 Miro Hrončok <mhroncok@redhat.com> - 0.99^20190113gitf06c8a8-1
 - Update to a git snapshot to support new Boost
 - Use RPATH to make it launch :/
