@@ -88,6 +88,9 @@ dos2unix README.md license.txt AUTHORS ChangeLog
 
 %patch1 -p1
 
+# Don't show GITDIR-NOTFOUND in the window title
+sed -i 's/GITDIR-NOTFOUND/%{scommit}/' cmake_modules/*
+
 
 %build
 # low effort fix of some cmake brokenness
