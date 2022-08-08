@@ -11,7 +11,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        0.99^20190113git%{scommit}
-Release:        6%{?dist}
+Release:        7%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -140,6 +140,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %changelog
+* Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.99^20190113gitf06c8a8-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
+  5.1
+
 * Wed Feb 09 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.99^20190113gitf06c8a8-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
