@@ -103,7 +103,7 @@ export CXXFLAGS="%{build_cxxflags} -I/usr/include/compat-ffmpeg4"
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
   -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name}
 
-%ifnarch %{ix86} x86_64
+%ifnarch %{ix86} x86_64 aarch64
 # not enough memory in Koji for parallel build
 %global _smp_mflags -j1
 %endif
