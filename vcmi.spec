@@ -2,31 +2,27 @@ Name:           vcmi
 Summary:        Heroes of Might and Magic 3 game engine
 URL:            https://vcmi.eu/
 
-%global commit  f06c8a872592bddfbe3fd5116979af0679f27bd3
-%global scommit %(c=%{commit}; echo ${c:0:7})
-
 %global fuzzylite_commit  9751a751a17c0682ed5d02e583c6a0cda8bc88e5
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
 
-Version:        0.99^20190113git%{scommit}
-Release:        7%{?dist}
+Version:        1.0.0
+Release:        1%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
 
-Source0:        https://github.com/%{name}/%{name}/archive/%{commit}/%{name}-%{scommit}.tar.gz
+Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
 
 # Enable extra resolutions
 # https://forum.vcmi.eu/t/where-is-the-mod-for-resolutions-other-than-800x600/897/5
 # https://www.dropbox.com/sh/fwor43x5xrgzx6q/AABpTFqGK7Q9almbyr3hp9jma/mods/vcmi.zip (not directly downloadable)
-Source2:            %{name}.zip
+# unzip  delete Maps and repack as tar.gz
+Source2:            %{name}.tar.gz
 
-# Boost 1.71+
-Patch1:         https://github.com/vcmi/vcmi/commit/ac81d0f.patch
-Patch2:         fix_ffmpeg_suffix.patch
+Patch0:         fix_ffmpeg_suffix.patch
 
 # The Koji builder gets killed here, but I don't expect people to use this there
 ExcludeArch:    ppc64le
@@ -47,9 +43,12 @@ BuildRequires:  boost-system >= 1.51
 BuildRequires:  boost-thread >= 1.51
 BuildRequires:  boost-program-options >= 1.51
 BuildRequires:  boost-locale >= 1.51
+BuildRequires:  libappstream-glib
+BuildRequires:  luajit-devel
 BuildRequires:  minizip-devel
+BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
-BuildRequires:  compat-ffmpeg4-devel
+BuildRequires:  ffmpeg-devel
 BuildRequires:  qt5-qtbase-devel
 
 Requires:       hicolor-icon-theme
@@ -76,28 +75,23 @@ Data files for the VCMI project, a %{summary}.
 
 
 %prep
-%setup -q -a1 -a2 -n %{name}-%{commit}
+%autosetup -p1
 # fuzzyight from Source1:
-rmdir AI/FuzzyLite
-mv fuzzylite-%{fuzzylite_commit} AI/FuzzyLite
+tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
 # mods from Source2:
-mv vcmi/Mods/* Mods && rm -rf vcmi
+tar -xf %{SOURCE2} -C Mods --strip-components=2
 
 dos2unix README.md license.txt AUTHORS ChangeLog
 
-%patch1 -p1
-%patch2 -p1
-
 # Don't show GITDIR-NOTFOUND in the window title
-sed -i 's/GITDIR-NOTFOUND/%{scommit}/' cmake_modules/*
-
+sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
 
 %build
 # low effort fix of some cmake brokenness
-export CXXFLAGS="%{build_cxxflags} -I/usr/include/compat-ffmpeg4"
+export CXXFLAGS="%{build_cxxflags} -I/usr/include/ffmpeg"
 
-%cmake \
+%cmake -Wno-dev \
   -DENABLE_TEST=0 \
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
@@ -116,7 +110,7 @@ export CXXFLAGS="%{build_cxxflags} -I/usr/include/compat-ffmpeg4"
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
-
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.metainfo.xml
 
 %ldconfig_scriptlets
 
@@ -133,6 +127,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 # keep this in the main package, because GNOME Software etc.
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/vcmiclient.png
+%{_metainfodir}/eu.vcmi.VCMI.metainfo.xml
 
 
 %files data
@@ -141,6 +136,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 
 %changelog
+* Wed Sep 14 2022 Leigh Scott <leigh123linux@gmail.com> - 1.0.0-1
+- New upstream release
+
 * Mon Aug 08 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.99^20190113gitf06c8a8-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1

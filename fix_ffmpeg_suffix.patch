@@ -1,11 +1,11 @@
---- a/cmake_modules/FindFFmpeg.cmake
-+++ b/cmake_modules/FindFFmpeg.cmake
-@@ -79,7 +79,7 @@ macro(find_component _component _pkgconf
-       ${PC_LIB${_component}_INCLUDEDIR}
-       ${PC_LIB${_component}_INCLUDE_DIRS}
-     PATH_SUFFIXES
--      ffmpeg
-+      compat-ffmpeg4
-   )
+--- a/cmake_modules/Findffmpeg.cmake
++++ b/cmake_modules/Findffmpeg.cmake
+@@ -73,6 +73,8 @@ function (_ffmpeg_find component headern
+       /opt/lib
+       /usr/freeware/lib64
+       "${ffmpeg_ROOT}/bin"
++    PATH_SUFFIXES
++      ffmpeg
+     DOC "FFMPEG's ${component} library")
+   mark_as_advanced("ffmpeg_${component}_LIBRARY")
  
-   find_library(${_component}_LIBRARIES NAMES ${_library}
