@@ -8,7 +8,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        1.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -136,6 +136,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Thu Mar 02 2023 Leigh Scott <leigh123linux@gmail.com> - 1.0.0-3
+- Rebuild for new boost
+
 * Wed Feb 08 2023 Leigh Scott <leigh123linux@gmail.com> - 1.0.0-2
 - rebuilt
 
