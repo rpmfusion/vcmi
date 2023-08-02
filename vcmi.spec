@@ -8,7 +8,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        1.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -136,6 +136,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Wed Aug 02 2023 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.0.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
 * Thu Mar 02 2023 Leigh Scott <leigh123linux@gmail.com> - 1.0.0-3
 - Rebuild for new boost
 
