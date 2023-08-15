@@ -2,25 +2,19 @@ Name:           vcmi
 Summary:        Heroes of Might and Magic 3 game engine
 URL:            https://vcmi.eu/
 
-%global fuzzylite_commit  9751a751a17c0682ed5d02e583c6a0cda8bc88e5
+%global fuzzylite_commit  7aee562d6ca17f3cf42588ffb5116e03017c3c50
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
 
-Version:        1.0.0
-Release:        4%{?dist}
+Version:        1.3.0
+Release:        1%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
 
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
-
-# Enable extra resolutions
-# https://forum.vcmi.eu/t/where-is-the-mod-for-resolutions-other-than-800x600/897/5
-# https://www.dropbox.com/sh/fwor43x5xrgzx6q/AABpTFqGK7Q9almbyr3hp9jma/mods/vcmi.zip (not directly downloadable)
-# unzip  delete Maps and repack as tar.gz
-Source2:            %{name}.tar.gz
 
 Patch0:         fix_ffmpeg_suffix.patch
 
@@ -45,11 +39,12 @@ BuildRequires:  boost-program-options >= 1.51
 BuildRequires:  boost-locale >= 1.51
 BuildRequires:  libappstream-glib
 BuildRequires:  luajit-devel
-BuildRequires:  minizip-devel
+BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  ffmpeg-devel
 BuildRequires:  qt5-qtbase-devel
+BuildRequires:  qt5-linguist
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
@@ -79,19 +74,15 @@ Data files for the VCMI project, a %{summary}.
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
-# mods from Source2:
-tar -xf %{SOURCE2} -C Mods --strip-components=2
-
-dos2unix README.md license.txt AUTHORS ChangeLog
+dos2unix README.md license.txt AUTHORS ChangeLog.md
 
 # Don't show GITDIR-NOTFOUND in the window title
 sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
 
 %build
-# low effort fix of some cmake brokenness
-export CXXFLAGS="%{build_cxxflags} -I/usr/include/ffmpeg"
 
 %cmake -Wno-dev \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DENABLE_TEST=0 \
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
@@ -116,8 +107,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %files
-%doc README.md AUTHORS ChangeLog
+%doc README.md AUTHORS ChangeLog.md
 %license license.txt AI/FuzzyLite/LICENSE.FuzzyLite
+%{_bindir}/vcmieditor
 %{_bindir}/vcmiclient
 %{_bindir}/vcmiserver
 %{_bindir}/vcmibuilder
@@ -127,6 +119,8 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 # keep this in the main package, because GNOME Software etc.
 %{_datadir}/applications/*.desktop
 %{_datadir}/icons/hicolor/*/apps/vcmiclient.png
+%{_datadir}/icons/hicolor/*/apps/vcmiclient.svg
+%{_datadir}/icons/hicolor/*/apps/vcmieditor.png
 %{_metainfodir}/eu.vcmi.VCMI.metainfo.xml
 
 
@@ -136,6 +130,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Mon Aug 14 2023 Trung Lê <8@tle.id.au> - 1.3.0-1
+- New upstream release
+- Clean up defunct codes
+
 * Wed Aug 02 2023 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.0.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 
