@@ -8,7 +8,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        1.3.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -17,9 +17,6 @@ Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
 
 Patch0:         fix_ffmpeg_suffix.patch
-
-# The Koji builder gets killed here, but I don't expect people to use this there
-ExcludeArch:    ppc64le
 
 BuildRequires:  %{_bindir}/desktop-file-validate
 BuildRequires:  %{_bindir}/dos2unix
@@ -38,7 +35,9 @@ BuildRequires:  boost-thread >= 1.51
 BuildRequires:  boost-program-options >= 1.51
 BuildRequires:  boost-locale >= 1.51
 BuildRequires:  libappstream-glib
+%ifnarch ppc64le
 BuildRequires:  luajit-devel
+%endif
 BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
@@ -88,7 +87,7 @@ sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
   -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name}
 
-%ifnarch %{ix86} x86_64 aarch64
+%ifnarch %{ix86} x86_64 aarch64 ppc64le
 # not enough memory in Koji for parallel build
 %global _smp_mflags -j1
 %endif
