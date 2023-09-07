@@ -8,7 +8,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        1.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -43,8 +43,14 @@ BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  ffmpeg-devel
+%if 0%{?fedora} >= 39
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qttools-devel
+BuildRequires:  qt6-linguist
+%else
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-linguist
+%endif
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
@@ -130,6 +136,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Thu Aug 31 2023 Trung Lê <8@tle.id.au> - 1.3.1-2
+- Rebuilt with Qt6 for Fedora 39
+
 * Sat Aug 19 2023 Trung Lê <8@tle.id.au> - 1.3.1-1
 - New upstream release
 - Re-enable support for ppc64le
