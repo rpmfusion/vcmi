@@ -7,8 +7,8 @@ URL:            https://vcmi.eu/
 %global fuzzylite_version 6.0
 
 
-Version:        1.3.1
-Release:        2%{?dist}
+Version:        1.4.5
+Release:        0%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -136,6 +136,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Thu Jan 25 2024 Trung Lê <8@tle.id.au> - 1.4.5-0
+- New upstream release
+
 * Thu Aug 31 2023 Trung Lê <8@tle.id.au> - 1.3.1-2
 - Rebuilt with Qt6 for Fedora 39
 
