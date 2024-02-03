@@ -8,7 +8,7 @@ URL:            https://vcmi.eu/
 
 
 Version:        1.4.5
-Release:        0%{?dist}
+Release:        1%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
@@ -80,7 +80,7 @@ Data files for the VCMI project, a %{summary}.
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
-dos2unix README.md license.txt AUTHORS ChangeLog.md
+dos2unix license.txt ChangeLog.md
 
 # Don't show GITDIR-NOTFOUND in the window title
 sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
@@ -113,7 +113,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %files
-%doc README.md AUTHORS ChangeLog.md
+%doc ChangeLog.md
 %license license.txt AI/FuzzyLite/LICENSE.FuzzyLite
 %{_bindir}/vcmieditor
 %{_bindir}/vcmiclient
@@ -136,7 +136,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
-* Thu Jan 25 2024 Trung Lê <8@tle.id.au> - 1.4.5-0
+* Thu Jan 25 2024 Trung Lê <8@tle.id.au> - 1.4.5-1
 - New upstream release
 
 * Thu Aug 31 2023 Trung Lê <8@tle.id.au> - 1.3.1-2
