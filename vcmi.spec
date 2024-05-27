@@ -6,15 +6,19 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
+%global innoextract_commit  9977089412ebafe9f79936aa65a2edf16a84ae3e
+%global innoextract_scommit %(c=%{innoextract_commit}; echo ${c:0:7})
+%global innoextract_version 1.9
 
-Version:        1.4.5
-Release:        1%{?dist}
+Version:        1.5.1
+Release:        0%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
 
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
+Source2:        https://github.com/vcmi/innoextract/archive/%{innoextract_commit}/innoextract-%{innoextract_scommit}.tar.gz
 
 Patch0:         fix_ffmpeg_suffix.patch
 
@@ -80,6 +84,9 @@ Data files for the VCMI project, a %{summary}.
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
+# innoextract from Source2:
+tar -xf %{SOURCE2} -C launcher/lib/innoextract --strip-components=1
+
 dos2unix license.txt ChangeLog.md
 
 # Don't show GITDIR-NOTFOUND in the window title
@@ -136,6 +143,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Mon May 27 2024 Trung Lê <8@tle.id.au> - 1.5.1-1
+- New upstream release
+
 * Thu Jan 25 2024 Trung Lê <8@tle.id.au> - 1.4.5-1
 - New upstream release
 
