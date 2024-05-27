@@ -6,19 +6,14 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
-%global innoextract_commit  9977089412ebafe9f79936aa65a2edf16a84ae3e
-%global innoextract_scommit %(c=%{innoextract_commit}; echo ${c:0:7})
-%global innoextract_version 1.9
-
 Version:        1.5.1
-Release:        0%{?dist}
+Release:        1%{?dist}
 
 # vcmi is GPLv2+, fyzzylight is GPLv3
 License:        GPLv2+ and GPLv3
 
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
-Source2:        https://github.com/vcmi/innoextract/archive/%{innoextract_commit}/innoextract-%{innoextract_scommit}.tar.gz
 
 Patch0:         fix_ffmpeg_suffix.patch
 
@@ -56,6 +51,7 @@ BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-linguist
 %endif
 
+Requires:       innoextract
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
 Provides:       bundled(fuzzylight) = %{fuzzylite_version}
@@ -84,9 +80,6 @@ Data files for the VCMI project, a %{summary}.
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
-# innoextract from Source2:
-tar -xf %{SOURCE2} -C launcher/lib/innoextract --strip-components=1
-
 dos2unix license.txt ChangeLog.md
 
 # Don't show GITDIR-NOTFOUND in the window title
@@ -99,7 +92,8 @@ sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
   -DENABLE_TEST=0 \
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-  -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name}
+  -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name} \
+  -DENABLE_INNOEXTRACT='FALSE'
 
 %ifnarch %{ix86} x86_64 aarch64
 # not enough memory in Koji for parallel build
