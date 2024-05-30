@@ -42,14 +42,9 @@ BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  ffmpeg-devel
-%if 0%{?fedora} >= 39
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qttools-devel
 BuildRequires:  qt6-linguist
-%else
-BuildRequires:  qt5-qtbase-devel
-BuildRequires:  qt5-linguist
-%endif
 
 Requires:       innoextract
 Requires:       hicolor-icon-theme
@@ -100,6 +95,10 @@ sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
 %global _smp_mflags -j1
 %endif
 %cmake_build
+# Move the .qm files to the expected directories
+mkdir %{_vpath_builddir}/{launcher,mapeditor}/translation/
+mv %{_vpath_builddir}/launcher/*.qm %{_vpath_builddir}/launcher/translation/
+mv %{_vpath_builddir}/mapeditor/*.qm %{_vpath_builddir}/mapeditor/translation/
 
 
 %install
