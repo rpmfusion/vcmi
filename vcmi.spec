@@ -75,9 +75,6 @@ tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 
 dos2unix license.txt ChangeLog.md
 
-# Don't show GITDIR-NOTFOUND in the window title
-sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
-
 %build
 
 %cmake -Wno-dev \
@@ -86,7 +83,8 @@ sed -i 's/GITDIR-NOTFOUND/%{version}/' cmake_modules/*
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
   -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name} \
-  -DENABLE_INNOEXTRACT='FALSE'
+  -DENABLE_INNOEXTRACT='FALSE' \
+  -DENABLE_GOLDMASTER=ON
 
 %ifnarch %{ix86} x86_64 aarch64
 # not enough memory in Koji for parallel build
