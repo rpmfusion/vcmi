@@ -15,8 +15,6 @@ License:        GPLv2+ and GPLv3
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
 
-Patch0:         fix_ffmpeg_suffix.patch
-
 BuildRequires:  %{_bindir}/desktop-file-validate
 BuildRequires:  %{_bindir}/dos2unix
 BuildRequires:  cmake
