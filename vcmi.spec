@@ -32,7 +32,10 @@ BuildRequires:  luajit-devel
 BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
-BuildRequires:  ffmpeg-devel
+BuildRequires:  pkgconfig(libavcodec)
+BuildRequires:  pkgconfig(libavformat)
+BuildRequires:  pkgconfig(libavutil)
+BuildRequires:  pkgconfig(libswscale)
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qttools-devel
 BuildRequires:  qt6-linguist
