@@ -128,7 +128,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
-* Wed Jun 9 2024 Trung Lê <8@tle.id.au> - 1.5.3-0
+* Tue Jul 9 2024 Trung Lê <8@tle.id.au> - 1.5.3-0
 - New upstream release
 
 * Mon Jul 8 2024 Peter Lemenkov <lemenkov@gmail.com> - 1.5.2-1
