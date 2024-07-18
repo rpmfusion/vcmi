@@ -6,7 +6,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
-Version:        1.5.4
+Version:        1.5.5
 Release:        0%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
@@ -128,6 +128,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Thu Jul 18 2024 Trung Lê <8@tle.id.au> - 1.5.5-0
+- New upstream release
+
 * Mon Jul 15 2024 Trung Lê <8@tle.id.au> - 1.5.4-0
 - New upstream release
 
