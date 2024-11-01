@@ -102,8 +102,6 @@ mv %{_vpath_builddir}/mapeditor/*.qm %{_vpath_builddir}/mapeditor/translation/
 desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.metainfo.xml
 
-%ldconfig_scriptlets
-
 
 %files
 %doc ChangeLog.md
@@ -125,7 +123,6 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 %files data
 %{_datadir}/%{name}/
-
 
 
 %changelog
