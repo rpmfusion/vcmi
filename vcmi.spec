@@ -7,7 +7,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_version 6.0
 
 Version:        1.5.7
-Release:        0%{?dist}
+Release:        1%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -128,7 +128,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
-* Thu Aug 31 2024 Trung Lê <8@tle.id.au> - 1.5.7-0
+* Wed Nov 06 2024 Sérgio Basto <sergio@serjux.com> - 1.5.7-1
+- Rebuild for ffmpeg-7
+
+* Sat Aug 31 2024 Trung Lê <8@tle.id.au> - 1.5.7-0
 - New upstream release
 
 * Thu Aug 08 2024 Trung Lê <8@tle.id.au> - 1.5.6-0
