@@ -6,8 +6,8 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
-Version:        1.6.6
-Release:        1%{?dist}
+Version:        1.6.7
+Release:        0%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -88,7 +88,7 @@ dos2unix license.txt ChangeLog.md
 %endif
 %cmake_build
 # Move the .qm files to the expected directories
-mkdir %{_vpath_builddir}/{launcher,mapeditor}/translation/
+mkdir -p %{_vpath_builddir}/{launcher,mapeditor}/translation/
 mv %{_vpath_builddir}/launcher/*.qm %{_vpath_builddir}/launcher/translation/
 mv %{_vpath_builddir}/mapeditor/*.qm %{_vpath_builddir}/mapeditor/translation/
 
@@ -128,6 +128,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Sat Mar 1 2025 Trung Lê <8@tle.id.au> - 1.6.7-0
+- New upstream release
+
 * Fri Feb 28 2025 Trung Lê <8@tle.id.au> - 1.6.6-0
 - New upstream release
 
