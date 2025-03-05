@@ -72,8 +72,9 @@ tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 dos2unix license.txt ChangeLog.md
 
 %build
-
+export CFLAGS+=" -std=gnu17"
 %cmake -Wno-dev \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DENABLE_TEST=0 \
   -UCMAKE_INSTALL_LIBDIR \
