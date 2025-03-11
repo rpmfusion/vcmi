@@ -7,7 +7,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_version 6.0
 
 Version:        1.6.7
-Release:        0%{?dist}
+Release:        1%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -125,6 +125,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Sat Mar 1 2025 Peter Lemenkov <lemenkov@gmail.com> - 1.6.7-1
+- Remove outdated macrco
+
 * Sat Mar 1 2025 Trung Lê <8@tle.id.au> - 1.6.7-0
 - New upstream release
 
