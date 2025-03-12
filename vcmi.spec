@@ -7,7 +7,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_version 6.0
 
 Version:        1.6.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -29,7 +29,6 @@ BuildRequires:  libappstream-glib
 # luajit does not support ppc64le
 BuildRequires:  luajit-devel
 %endif
-BuildRequires:  minizip-ng-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(libavcodec)
@@ -73,9 +72,13 @@ dos2unix license.txt ChangeLog.md
 
 %build
 export CFLAGS+=" -std=gnu17"
+
+# Force using bundled minizip
+# Why? Please see https://github.com/vcmi/vcmi/issues/2731
 %cmake -Wno-dev \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DFORCE_BUNDLED_MINIZIP=ON \
   -DENABLE_TEST=0 \
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
@@ -126,6 +129,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Wed Mar 12 2025 Trung Lê <8@tle.id.au> - 1.6.7-2
+- Use bundled minizip to fix issue of mod installation
+
 * Sat Mar 1 2025 Peter Lemenkov <lemenkov@gmail.com> - 1.6.7-1
 - Remove outdated macrco
 
