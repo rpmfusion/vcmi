@@ -7,7 +7,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_version 6.0
 
 Version:        1.6.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -126,6 +126,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Sun Jul 27 2025 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.6.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
+
 * Sat Mar 1 2025 Peter Lemenkov <lemenkov@gmail.com> - 1.6.7-1
 - Remove outdated macrco
 
