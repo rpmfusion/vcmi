@@ -83,10 +83,6 @@ export CFLAGS+=" -std=gnu17"
   -DENABLE_INNOEXTRACT='FALSE' \
   -DENABLE_GOLDMASTER=ON
 
-%ifnarch %{ix86} x86_64 aarch64
-# not enough memory in Koji for parallel build
-%global _smp_mflags -j1
-%endif
 %cmake_build
 # Move the .qm files to the expected directories
 mkdir -p %{_vpath_builddir}/{launcher,mapeditor}/translation/
