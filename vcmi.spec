@@ -6,8 +6,8 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
-Version:        1.6.7
-Release:        4%{?dist}
+Version:        1.7.1
+Release:        1%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
 License:        GPL-2.0-or-later AND GPL-3.0-only
@@ -122,6 +122,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Tue Feb 03 2026 Nicolas Chauvet <kwizart@gmail.com> - 1.7.1-1
+- Update to 1.7.1
+
 * Mon Feb 02 2026 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 1.6.7-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
 
