@@ -31,6 +31,7 @@ BuildRequires:  libsquish-devel
 BuildRequires:  luajit-devel
 %endif
 BuildRequires:  minizip-ng-devel
+BuildRequires:  minizip-ng-compat-devel
 BuildRequires:  onnxruntime-devel
 BuildRequires:  openssl-devel
 BuildRequires:  tbb-devel
