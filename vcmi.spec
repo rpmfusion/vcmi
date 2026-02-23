@@ -41,6 +41,7 @@ BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  pkgconfig(libswscale)
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qttools-devel
+BuildRequires:  qt6-qtsvg-devel
 BuildRequires:  qt6-linguist
 
 Requires:       innoextract
