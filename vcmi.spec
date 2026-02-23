@@ -6,7 +6,7 @@ URL:            https://vcmi.eu/
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
 %global fuzzylite_version 6.0
 
-Version:        1.7.1
+Version:        1.7.2
 Release:        1%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
@@ -25,11 +25,13 @@ BuildRequires:  SDL2_ttf-devel
 BuildRequires:  SDL2_mixer-devel
 BuildRequires:  boost-devel >= 1.51
 BuildRequires:  libappstream-glib
+BuildRequires:  libsquish-devel
 %ifnarch ppc64le
 # luajit does not support ppc64le
 BuildRequires:  luajit-devel
 %endif
 BuildRequires:  minizip-ng-devel
+BuildRequires:  onnxruntime-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(libavcodec)
@@ -122,6 +124,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Mon Feb 23 2026 Nicolas Chauvet <kwizart@gmail.com> - 1.7.2-1
+- Update to 1.7.2
+
 * Tue Feb 03 2026 Nicolas Chauvet <kwizart@gmail.com> - 1.7.1-1
 - Update to 1.7.1
 
