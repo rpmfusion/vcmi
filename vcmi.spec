@@ -8,6 +8,8 @@ URL:            https://vcmi.eu/
 %global discord_presence_commit 01b3ebc622c2ab5b110f6ac966b37a578c43f610
 %global discord_presence_scommit %(c=%{discord_presence_commit}; echo ${c:0:7})
 %global discord_presence_version 0
+%global glaze_version 5.5.4
+%global cpm_cmake_version 0.40.5
 
 Version:        1.7.2
 Release:        1%{?dist}
@@ -18,6 +20,8 @@ License:        GPL-2.0-or-later AND GPL-3.0-only
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
 Source2:        https://github.com/EclipseMenu/discord-presence/archive/%{discord_presence_commit}/discord-precence-%{discord_presence_scommit}.tar.gz
+Source3:        https://github.com/stephenberry/glaze/archive/v%{glaze_version}/glaze-%{glaze_version}.tar.gz
+Source4:        https://github.com/cpm-cmake/CPM.cmake/releases/download/v%{cpm_cmake_version}/CPM.cmake
 
 BuildRequires:  %{_bindir}/desktop-file-validate
 BuildRequires:  %{_bindir}/dos2unix
@@ -49,12 +53,16 @@ BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qttools-devel
 BuildRequires:  qt6-qtsvg-devel
 BuildRequires:  qt6-linguist
+# for the bundled glaze
+BuildRequires: xxhashct-devel
+BuildRequires: fast_float-devel
 
 Requires:       innoextract
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
 Provides:       bundled(fuzzylight) = %{fuzzylite_version}
 Provides:       bundled(discord-presence) = %{discord_presence_version}
+Provides:       bundled(glaze) = %{glaze_version}
 
 %description
 The purpose of VCMI project is to rewrite entire Heroes 3.5: WoG engine from
@@ -80,6 +88,9 @@ Data files for the VCMI project, a %{summary}.
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
 tar -xf %{SOURCE2} -C client/lib/discord-presence --strip-components=1
+mkdir -p _deps/glaze-src
+tar -xf %{SOURCE3} -C _deps/glaze-src --strip-components=1
+install -pm 0644 %{SOURCE4} client/lib/discord-presence/cmake
 
 
 %build
@@ -87,6 +98,8 @@ tar -xf %{SOURCE2} -C client/lib/discord-presence --strip-components=1
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DENABLE_TEST=0 \
+  -DFETCHCONTENT_FULLY_DISCONNECTED=ON \
+  -DFETCHCONTENT_BASE_DIR="${PWD}/_deps" \
   -UCMAKE_INSTALL_LIBDIR \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
   -DCMAKE_INSTALL_RPATH=%{_libdir}/%{name} \
