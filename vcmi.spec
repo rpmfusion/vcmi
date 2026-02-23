@@ -28,6 +28,7 @@ BuildRequires:  SDL2_image-devel
 BuildRequires:  SDL2_ttf-devel
 BuildRequires:  SDL2_mixer-devel
 BuildRequires:  boost-devel >= 1.51
+BuildRequires:  fmt-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  libsquish-devel
 %ifnarch ppc64le
