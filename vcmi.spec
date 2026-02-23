@@ -2,9 +2,12 @@ Name:           vcmi
 Summary:        Heroes of Might and Magic 3 game engine
 URL:            https://vcmi.eu/
 
-%global fuzzylite_commit  7aee562d6ca17f3cf42588ffb5116e03017c3c50
+%global fuzzylite_commit  13b3122f5c353c0389ed4e66041d548c44ec9df6
 %global fuzzylite_scommit %(c=%{fuzzylite_commit}; echo ${c:0:7})
-%global fuzzylite_version 6.0
+%global fuzzylite_version 7.0.0
+%global discord_presence_commit 01b3ebc622c2ab5b110f6ac966b37a578c43f610
+%global discord_presence_scommit %(c=%{discord_presence_commit}; echo ${c:0:7})
+%global discord_presence_version 0
 
 Version:        1.7.2
 Release:        1%{?dist}
@@ -14,6 +17,7 @@ License:        GPL-2.0-or-later AND GPL-3.0-only
 
 Source0:        https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/fuzzylite/fuzzylite/archive/%{fuzzylite_commit}/fuzzylite-%{fuzzylite_scommit}.tar.gz
+Source2:        https://github.com/EclipseMenu/discord-presence/archive/%{discord_presence_commit}/discord-precence-%{discord_presence_scommit}.tar.gz
 
 BuildRequires:  %{_bindir}/desktop-file-validate
 BuildRequires:  %{_bindir}/dos2unix
@@ -49,6 +53,7 @@ Requires:       innoextract
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
 Provides:       bundled(fuzzylight) = %{fuzzylite_version}
+Provides:       bundled(discord-presence) = %{discord_presence_version}
 
 %description
 The purpose of VCMI project is to rewrite entire Heroes 3.5: WoG engine from
@@ -73,11 +78,10 @@ Data files for the VCMI project, a %{summary}.
 %autosetup -p1
 # fuzzyight from Source1:
 tar -xf %{SOURCE1} -C AI/FuzzyLite --strip-components=1
+tar -xf %{SOURCE2} -C client/lib/discord-presence --strip-components=1
 
-dos2unix license.txt ChangeLog.md
 
 %build
-export CFLAGS+=" -std=gnu17"
 %cmake -Wno-dev \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -89,10 +93,6 @@ export CFLAGS+=" -std=gnu17"
   -DENABLE_GOLDMASTER=ON
 
 %cmake_build
-# Move the .qm files to the expected directories
-mkdir -p %{_vpath_builddir}/{launcher,mapeditor}/translation/
-mv %{_vpath_builddir}/launcher/*.qm %{_vpath_builddir}/launcher/translation/
-mv %{_vpath_builddir}/mapeditor/*.qm %{_vpath_builddir}/mapeditor/translation/
 
 
 %install
