@@ -32,6 +32,7 @@ BuildRequires:  luajit-devel
 %endif
 BuildRequires:  minizip-ng-devel
 BuildRequires:  onnxruntime-devel
+BuildRequires:  openssl-devel
 BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(libavcodec)
