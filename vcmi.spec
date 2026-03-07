@@ -95,6 +95,7 @@ install -pm 0644 %{SOURCE4} client/lib/discord-presence/cmake
 
 %build
 %cmake -Wno-dev \
+  -DQT_DIR=/usr/lib64/cmake/Qt6 \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DENABLE_TEST=0 \
