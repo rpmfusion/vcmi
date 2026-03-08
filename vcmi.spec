@@ -11,7 +11,7 @@ URL:            https://vcmi.eu/
 %global glaze_version 5.5.4
 %global cpm_cmake_version 0.40.5
 
-Version:        1.7.2
+Version:        1.7.3
 Release:        1%{?dist}
 
 # vcmi is GPL-2.0-or-later, fuzzylight is GPL-3.0-only
@@ -142,6 +142,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/eu.vcmi.VCMI.m
 
 
 %changelog
+* Sun Mar 08 2026 Trung Lê <8@tle.id.au> - 1.7.3-1
+- Update to 1.7.3
+
 * Mon Feb 23 2026 Nicolas Chauvet <kwizart@gmail.com> - 1.7.2-1
 - Update to 1.7.2
 
